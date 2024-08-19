@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>js14a</title>
+    <style>
+        #game {
+            box-shadow: 0 0 10px #333;
+            margin: 10vh auto;
+            position: relative;
+            width: 800px;
+            height: 600px;
+        }
+        #game > * {
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+
+    <script>
+        class HTMLElem {
+            constructor(id, width, height, color, radius, x, y, speedX, speedY){
+                this.id = id;
+                this.width = width;
+                this.height = height;
+                this.color = color; 
+                this.radius = radius;
+                this.x = x;
+                this.y = y;
+                this.speedX = speedX;
+                this.speedY = speedY;
+            }
+            create(main){
+                main.innerHTML += `<div id="${this.id}"></div>`;
+                this.show();
+            }
+            show(){
+                this.elem = document.getElementById(this.id);
+                this.elem.style.width = this.width + 'px';
+                this.elem.style.height = this.height + 'px';
+                this.elem.style.backgroundColor = this.color;
+                this.elem.style.borderRadius = this.radius + '%';
+                this.elem.style.left = this.x + 'px';
+                this.elem.style.top = this.y + 'px';
+            }
+        }
+        
+        const game = new HTMLElem('game', 800, 600, 'white', 0, 0, 0, 0, 0);
+        const ball = new HTMLElem('ball', 30, 30, 'red', 50, 0, 0, 5, 5);
+        const bar = new HTMLElem('bar', 150, 10, 'blue', 0, 0, 0, 20, 0);
+        
+        bar.y = game.height - bar.height;
+        
+        ball.move = function(){
+            if (this.x < 0 || this.x >= 770) this.speedX *= -1;
+            if (this.y < 0 || this.y >= 570) this.speedY *= -1;
+            
+            this.x += this.speedX;
+            this.y += this.speedY;
+            this.show();
+        }
+        
+        bar.move = function(e){
+            if (e.keyCode == 37 && this.x > 0) this.x -= this.speedX;
+            if (e.keyCode == 39 && this.x < game.width - this.width) this.x += this.speedX;
+            this.show();
+        }
+
+        game.create(document.querySelector("body"));
+        ball.create(document.querySelector("#game"));
+        bar.create(document.querySelector("#game"));
+
+        setInterval(function() { ball.move(); }, 20);
+        onkeydown = function(e) { bar.move(e); }
+    </script>
+</body>
+</html>
